@@ -32,6 +32,32 @@ A single Telegram interface that automates the routine through AI analysis, pres
 
 A three-layer data-flow design:
 
+```mermaid
+flowchart LR
+    TG["Telegram API<br/><i>Chat, inline buttons</i>"]
+    N8N["n8n self-hosted<br/><i>55+ nodes, JS parsing</i>"]
+    AI["OpenAI<br/><i>GPT-4o, Vision API</i>"]
+    GW["Google Workspace<br/><i>Sheets, Calendar</i>"]
+    DS["Dialog_State sheet<br/><i>State per onboarding step</i>"]
+
+    TG -- "JSON payload" --> N8N
+    N8N --> AI
+    N8N --> GW
+    N8N -- "persist state" --> DS
+
+    subgraph L1["Layer 1 — Frontend"]
+        TG
+    end
+    subgraph L2["Layer 2 — Orchestrator"]
+        N8N
+        DS
+    end
+    subgraph L3["Layer 3 — Backend"]
+        AI
+        GW
+    end
+```
+
 - **Layer 1 — Frontend (Telegram API):** interaction point, raw data capture, inline buttons.
 - **Layer 2 — Orchestrator (n8n, self-hosted):** central processor, 55+ nodes in one workflow, JavaScript validation and parsing, webhook handling, data routing.
 - **Layer 3 — Memory & Intelligence (Backend):**
